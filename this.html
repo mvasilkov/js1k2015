@@ -4,8 +4,8 @@
 		<meta charset=utf8>
 		<title>js1k2015</title>
 		<style>
-			html, body { margin: 0; padding: 0; border: 0; width: 100%; height: 100% }
-			canvas { display: block; width: 500px; height: 500px }
+			html, body {margin: 0; padding: 0; border: 0; width: 100%; height: 100%}
+			canvas {display: block; width: 500px; height: 500px}
 		</style>
 	</head>
 	<body>
@@ -13,8 +13,9 @@
 		<script>
 			a = document.getElementsByTagName('canvas')[0]
 			b = document.body
-			c = a.getContext('2d')
+			//c = a.getContext('2d')
+			g = a.getContext('webgl', {antialias: true, stencil: true})
 		</script>
-		<script src=train.js></script>
+		<script src=monumental.js></script>
 	</body>
 </html>

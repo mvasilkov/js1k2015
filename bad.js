@@ -1,25 +1,30 @@
-HEIGHT = WIDTH = 500
+HEIGHT = WIDTH = 250
 STEPS = 32
 CLOSE_ENOUGH = 0.001
 
 var imagedata = c.createImageData(WIDTH, HEIGHT)
 
-var camera = [0, 0, -400]
-var focal_length = 40
+var camera = [0, 0, -80]
+var focal_length = 10
 var up = [0, 1, 0]
 var right = [1, 0, 0]
 
+var start_time = Date.now()
 render()
+var end_time = Date.now()
+console.log(end_time - start_time)
 
 function render() {
 	var p = 0
 	var u, v, real_u, real_v, rgb
 	var data = imagedata.data
 
+	rotate_camera_to(1.8 * Math.PI)
+
 	for (v = 0; v < HEIGHT; ++v) {
-		real_v = -(2 * v / HEIGHT - 1)
+		real_v = -(v / HEIGHT - 0.5)
 		for (u = 0; u < WIDTH; ++u) {
-			real_u = 2 * u / WIDTH - 1
+			real_u = u / WIDTH - 0.5
 			rgb = cast_ray(real_u, real_v)
 			data[p + 0] = 255 * rgb[0]
 			data[p + 1] = 255 * rgb[1]
@@ -29,7 +34,6 @@ function render() {
 		}
 	}
 	c.putImageData(imagedata, 0, 0)
-	console.log('done')
 }
 
 function cast_ray(u, v) {
@@ -43,11 +47,22 @@ function cast_ray(u, v) {
 		//var dist = vec3_length(p) - 0.5
 		var dist = box_repeat(p, [1, 1, 1], 4)
 		if (dist < CLOSE_ENOUGH) {
-			return [s / STEPS, s / STEPS, s / STEPS]
+			var res = 1 - s / STEPS
+			return [res, res, res]
 		}
 		t += dist
 	}
-	return [1, 1, 1]
+	return [0, 0, 0]
+}
+
+function rotate_camera_to(a) {
+	var r = 80
+	camera[0] = r * Math.cos(a)
+	camera[2] = r * Math.sin(a)
+
+	a += 0.5 * Math.PI
+	right[0] = Math.cos(a)
+	right[2] = Math.sin(a)
 }
 
 // functions
@@ -58,16 +73,11 @@ function box_repeat(p, b, step) {
 		p[0] += step / 2
 	else
 		p[0] -= step / 2
-	return box(p, b)
+	return box(p, b) - 0.1
 }
 
 function box(p, b) {
 	return vec3_length(vec3_max(vec3_sub(vec3_abs(p), b), 0))
-}
-
-function signed_box(p, b) {
-	var d = vec3_sub(vec3_abs(p), b)
-	return Math.min(vec3_max_comp(d), 0) + vec3_length(vec3_max(d, 0))
 }
 
 // math
