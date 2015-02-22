@@ -1,11 +1,39 @@
+const VERTEX_SHADER = [
+	'attribute vec4 p;',
+	'void main(void)',
+	'{',
+	'	gl_Position = p;',
+	'}'
+].join('\n')
+
+const FRAGMENT_SHADER = [
+	'precision lowp float;',
+	'uniform float t;',
+	'void main(void)',
+	'{',
+	'	gl_FragColor = vec4(0., 0., 0., 1.);',
+	'}'
+].join('\n')
+
 main()
 
 function main() {
+	g.viewport(0, 0, 256, 256)
+	a.height = a.width = 256
+	p = link(VERTEX_SHADER, FRAGMENT_SHADER)
+
+	g.enableVertexAttribArray(g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer()))
+	g.bufferData(g.ARRAY_BUFFER, new Float32Array([1, 1, 1, -3, -3, 1]), g.STATIC_DRAW)
+	g.vertexAttribPointer(0, 2, g.FLOAT, false, 0, 0)
+
+	t = 0
 	render()
 }
 
 function render() {
-	//requestAnimationFrame(render)
+	requestAnimationFrame(render)
+	g.uniform1f(g.getUniformLocation(p, 't'), t += 0.01)
+	g.drawArrays(g.TRIANGLES, 0, 3)
 }
 
 function compile(shader_source, shader_type) {
