@@ -40,19 +40,18 @@ const FRAGMENT_SHADER = [
 	'			break;',
 	'		}',
 	'	}',
-	'	float c = .02 * j;',
-	'	vec3 bg = vec3(.38, .49, .55);',
-	'	float add_c = .2 * abs(cos(20. * u)) + .2;',
-	'	gl_FragColor = vec4(c * (bg + add_c), 1.);',
+	'	gl_FragColor = vec4(.02 * j * (vec3(.38, .49, .55) + .2 * abs(cos(20. * u)) + .2), 1.);',
 	'}'
 ].join('\n')
+
+const FRAGMENT_SHADER_MIN = 'precision lowp float;uniform float t;float a(vec3 b,vec3 c){return length(max(abs(b)-c,0.));}float d(vec3 b,vec3 e){return length(b.xz-e.xy)-e.z;}void main(){vec2 f=gl_FragCoord.xy/256.;float g=.1*(t-pow(f.x-.5,2.)-pow(f.y-.5,2.));vec3 h=normalize(vec3(f.x+.2*cos(g),f.y-.5,.2*sin(g)-1.));vec3 i=vec3(-100.*cos(g)*cos(3.*g)+50.,5.,-100.*sin(g)*cos(3.*g)-50.);float j=40.;float k;for(float l=0.;l<500.;l+=1.){vec3 m=vec3(i+h*j);vec3 e=vec3(100.,100.,100.);vec3 n=mod(m,e)-.5*e;float o=min(a(n,vec3(50.,1.,50.)),min(d(n,vec3(0.,0.,5.)),a(n,vec3(5.5,5.,5.5))));j+=o;k=l;if(abs(o)<.0001){break;}}gl_FragColor=vec4(.02*k*(vec3(.38,.49,.55)+.2*abs(cos(20.*g))+.2),1.);}'
 
 main()
 
 function main() {
 	g.viewport(0, 0, 256, 256)
 	a.height = a.width = 256
-	p = link(VERTEX_SHADER, FRAGMENT_SHADER)
+	p = link('attribute vec4 p;void main(){gl_Position=p;}', FRAGMENT_SHADER_MIN)
 
 	g.enableVertexAttribArray(g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer()))
 	g.bufferData(g.ARRAY_BUFFER, new Float32Array([1, 1, 1, -3, -3, 1]), g.STATIC_DRAW)
