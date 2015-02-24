@@ -4,33 +4,35 @@ for (t in g) {
 	g[t.match(/^..|[A-Z]|1f$/g).join('')] = g[t]
 }
 
-g.viewport(0, 0, a.height = a.width = 256, 256)
+x = 35633
+
+g.vi(0, 0, a.height = a.width = 256, 256)
 p = link('attribute vec4 p;void main(){gl_Position=p;}', F)
 
-g.enableVertexAttribArray(g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer()))
-g.bufferData(g.ARRAY_BUFFER, new Float32Array([1, 1, 1, -3, -3, 1]), g.STATIC_DRAW)
-g.vertexAttribPointer(t=0, 2, g.FLOAT, false, 0, 0)
+g.enVAA(g.biB(x -= 670, g.crB()))
+g.buD(x, new Float32Array([1, 1, 1, -3, -3, 1]), x + 82)
+g.veAP(t=0, 2, 5126, false, 0, 0)
 
 R()
 
 function R() {
 	requestAnimationFrame(R)
-	g.uniform1f(g.getUniformLocation(p, 't'), t += 0.01)
-	g.drawArrays(g.TRIANGLES, 0, 3)
+	g.un1f(g.geUL(p, 't'), t += 0.01)
+	g.drA(4, 0, 3)
 }
 
 function compile(shader_source, shader_type) {
-	var shader = g.createShader(shader_type)
-	g.shaderSource(shader, shader_source)
-	g.compileShader(shader)
+	var shader = g.crS(shader_type)
+	g.shS(shader, shader_source)
+	g.coS(shader)
 	return shader
 }
 
 function link(vertex_shader, fragment_shader) {
-	var program = g.createProgram()
-	g.attachShader(program, compile(vertex_shader, g.VERTEX_SHADER))
-	g.attachShader(program, compile(fragment_shader, g.FRAGMENT_SHADER))
-	g.linkProgram(program)
-	g.useProgram(program)
+	var program = g.crP()
+	g.atS(program, compile(vertex_shader, x))
+	g.atS(program, compile(fragment_shader, --x))
+	g.liP(program)
+	g.usP(program)
 	return program
 }
