@@ -13,16 +13,15 @@ const FRAGMENT_SHADER = [
 	'{',
 	'	return length(max(abs(p) - b, 0.));',
 	'}',
-	'float make_column(vec3 p, vec3 c)',
-	'{',
-	'	return length(p.xz - c.xy) - c.z;',
-	'}',
 	'void main(void)',
 	'{',
 	'	vec2 coords = gl_FragCoord.xy / 256.;',
 	'	float u = .1 * (t - pow(coords.x - .5, 2.) - pow(coords.y - .5, 2.));',
-	'	vec3 ray_dir = normalize(vec3(coords.x + .2 * cos(u), coords.y - .5, .2 * sin(u) - 1.));',
-	'	vec3 ray_orig = vec3(-100. * cos(u) * cos(3. * u) + 50., 5., -100. * sin(u) * cos(3. * u) - 50.);',
+	'	float sin_u = sin(u);',
+	'	float cos_u = cos(u);',
+	'	float cos_3u = cos(3. * u);',
+	'	vec3 ray_dir = normalize(vec3(coords.x + .2 * cos_u, coords.y - .5, .2 * sin_u - 1.));',
+	'	vec3 ray_orig = vec3(-100. * cos_u * cos_3u + 50., 5., -100. * sin_u * cos_3u - 50.);',
 	'	float offs = 40.;',
 	'	float j;',
 	'	for (float i = 0.; i < 500.; i += 1.)',
@@ -31,8 +30,8 @@ const FRAGMENT_SHADER = [
 	'		vec3 c = vec3(100., 100., 100.);',
 	'		vec3 q = mod(pos, c) - .5 * c;',
 	'		float dist = min(make_box(q, vec3(50., 1., 50.)),',
-	'				 min(make_column(q, vec3(0., 0., 5.)),',
-	'				     make_box(q, vec3(5.5, 5., 5.5))));',
+	'				 min(make_box(q, vec3(5.5, 5., 5.5)),',
+	'				     length(q.xz) - 5.));',
 	'		offs += dist;',
 	'		j = i;',
 	'		if (abs(dist) < .0001)',
@@ -44,7 +43,7 @@ const FRAGMENT_SHADER = [
 	'}'
 ].join('\n')
 
-const FRAGMENT_SHADER_MIN = 'precision lowp float;uniform float t;float a(vec3 b,vec3 c){return length(max(abs(b)-c,0.));}float d(vec3 b,vec3 e){return length(b.xz-e.xy)-e.z;}void main(){vec2 f=gl_FragCoord.xy/256.;float g=.1*(t-pow(f.x-.5,2.)-pow(f.y-.5,2.));vec3 h=normalize(vec3(f.x+.2*cos(g),f.y-.5,.2*sin(g)-1.));vec3 i=vec3(-100.*cos(g)*cos(3.*g)+50.,5.,-100.*sin(g)*cos(3.*g)-50.);float j=40.;float k;for(float l=0.;l<500.;l+=1.){vec3 m=vec3(i+h*j);vec3 e=vec3(100.,100.,100.);vec3 n=mod(m,e)-.5*e;float o=min(a(n,vec3(50.,1.,50.)),min(d(n,vec3(0.,0.,5.)),a(n,vec3(5.5,5.,5.5))));j+=o;k=l;if(abs(o)<.0001){break;}}gl_FragColor=vec4(.02*k*(vec3(.38,.49,.55)+.2*abs(cos(20.*g))+.2),1.);}'
+const FRAGMENT_SHADER_MIN = 'precision lowp float;uniform float t;float a(vec3 b,vec3 c){return length(max(abs(b)-c,0.));}void main(){vec2 d=gl_FragCoord.xy/256.;float e=.1*(t-pow(d.x-.5,2.)-pow(d.y-.5,2.));float f=sin(e);float g=cos(e);float h=cos(3.*e);vec3 i=normalize(vec3(d.x+.2*g,d.y-.5,.2*f-1.));vec3 j=vec3(-100.*g*h+50.,5.,-100.*f*h-50.);float k=40.;float l;for(float m=0.;m<500.;m+=1.){vec3 n=vec3(j+i*k);vec3 o=vec3(100.,100.,100.);vec3 p=mod(n,o)-.5*o;float q=min(a(p,vec3(50.,1.,50.)),min(a(p,vec3(5.5,5.,5.5)),length(p.xz)-5.));k+=q;l=m;if(abs(q)<.0001){break;}}gl_FragColor=vec4(.02*l*(vec3(.38,.49,.55)+.2*abs(cos(20.*e))+.2),1.);}'
 
 main()
 
